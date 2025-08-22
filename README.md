@@ -6,6 +6,4 @@ a.) Use native libraries to present information from the game in such a way that
 
 b.) Display the coordinates on screen at all time as some older versions don't have this information in the F3 menu (and for some speedruns, the coordinates are used for determining when the run starts).
 
-<img width="888" height="421" alt="image" src="https://github.com/user-attachments/assets/2c5620f3-a06f-4cd5-8faa-a141bc35d19d" />
-
-
+<img width="888" height="421" alt="image" src="https://github.com/user-attachments/assets/2c5941e4-9fb0-4d31-8a0c-4320247f9a55" />
