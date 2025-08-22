@@ -10,6 +10,14 @@ b.) Display the coordinates on screen at all time as some older versions don't h
 
 Its primary use case is allowing older Minecraft Adventure maps to be speedrun convienently, as well as allow certain maps to start based on where the player coordinates are. The displaying of coordinates most useful for older versions where the F3 debug menu doesn't show coordinates, but its here for all versions so that you don't have to submit a run with the F3 menu open.
 
+# Installation
+
+Find the version that corresponds to your Minecraft version in the [releases](https://github.com/IoIxD/RMCSH/releases/latest) tab.
+
+Actually installing the mod depends on what launcher you use. Assuming you use a MultiMC-based launcher like PrismLauncher, locate the "Add to Minecraft.jar" button in the Versions tab of your instance, click it, then select the .zip you downloaded (do not extract the .zip) itself.
+
+<img width="167" height="284" alt="image" src="https://github.com/user-attachments/assets/d50cc2f6-794e-4d8d-8ee6-3693d3ce915a" />
+
 # Building
 
 The repo uses a Makefile to setup the environment (it uses [RetroMCP-Java](https://github.com/MCPHackers/RetroMCP-Java)), decompile all the versions of Minecraft that are supported, patch them, get them ready for distribution, and build/package the native DLL.

@@ -2,13 +2,20 @@
 
 VERSIONS = a1.1.2 a1.2.3_01-0958 a1.2.5 a1.2.6 b1.1_01 b1.2 b1.3_01 b1.4_01 b1.5_01 b1.6 b1.6.5 b1.6.6 b1.7 b1.8 b1.8.1 b1.9-pre5 1.0.0 1.1 1.2.3 1.2.5
 
-# We work off of a chain of commands that all depend on the previous one.
-# ?B
-all: patch
+all: patch dist
+
 env_setup: mcp_dir_setup retromcp_download
 setup: env_setup $(foreach version,$(VERSIONS),setup_$(version))
 decompile: setup $(foreach version,$(VERSIONS),decompile_$(version))
 patch: decompile $(foreach version,$(VERSIONS),patch_$(version))
+dist: natives $(foreach version,$(VERSIONS),mod_dist_$(version))
+
+dist_dir_setup:
+ifeq ("$(wildcard ./.dist)","")
+	@echo "$(wildcard ./.dist/)"
+	@echo "Making .dist directory"
+	@mkdir .dist
+endif
 
 mcp_dir_setup:
 ifeq ("$(wildcard ./.mcp)","")
@@ -38,8 +45,8 @@ decompile_%:
 	@if [ ! -d "./.mcp/$*" ]; then \
 		echo "./.mcp/$*" does not exist, cannot decompile; \
 	else \
-		if [ -d "./.mcp/$*/minecraft" ]; then \
-			echo "./.mcp/$*/minecraft" exists, skipping decompile; \
+		if [ -d "./.mcp/$*/minecraft/src" ]; then \
+			echo "./.mcp/$*/minecraft/src" exists, skipping decompile; \
 		else \
 			cd ./.mcp/$*; java -jar ../RetroMCP-Java-CLI.jar decompile $*; \
 		fi \
@@ -71,9 +78,9 @@ patch_%:
 		else \
 			rm -rf ./.mcp/$*/minecraft/src/net; \
 			cp -r ./.mcp/$*/minecraft/source/net ./.mcp/$*/minecraft/src/net; \
-			cp ./patches/LabyrinthModNative.java ./.mcp/$*/minecraft/src/net/minecraft/src; \
+			cp ./patches/RMCSHNative.java ./.mcp/$*/minecraft/src/net/minecraft/src; \
 			cp ./patches/$*.patch ./.mcp/$*/minecraft/src/net; \
-			cd ./.mcp/$*/minecraft/src/net; echo ">$*.patch"; git apply $*.patch; \
+			cd ./.mcp/$*/minecraft/src/net; echo ">$*.patch"; git apply $*.patch; rm $*.patch; \
 		fi \
 	fi
 
@@ -85,5 +92,35 @@ test_%: recompile_%
 		cd ./.mcp/$*; java -jar ../RetroMCP-Java-CLI.jar start client $*; \
 	fi
 
+mod_dist_%:
+	@echo packaging $*
+	@if [ ! -d "./.mcp/$*" ]; then \
+		echo "./.mcp/$*" does not exist, cannot cannot package dll; \
+	else \
+		if [ ! -d "./.mcp/$*/minecraft/src" ]; then \
+			echo "./.mcp/$*/minecraft/src" does not exist, cannot continue; \
+		else \
+			cp ./.dist/RMCSHNative.dll ./.mcp/$*/minecraft/src; \
+			cp ./.dist/libRMCSHNative.so ./.mcp/$*/minecraft/src; \
+			cd ./.mcp/$*; \
+				java -jar ../RetroMCP-Java-CLI.jar recompile $*; \
+				java -jar ../RetroMCP-Java-CLI.jar reobfuscate $*; \
+				java -jar ../RetroMCP-Java-CLI.jar build $*; \
+			cd ../..; \
+			cp ./.mcp/$*/build/minecraft.zip ./.dist/RMCSH-$*.zip; \
+		fi \
+	fi
+
+natives: dist_dir_setup native_linux native_windows
+
+native_linux:
+	gcc -c -fPIC -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux src/native.c
+	gcc -nostdlib -lgcc native.o -shared -o ./.dist/libRMCSHNative.so
+
+native_windows:
+	x86_64-w64-mingw32-gcc -c -fPIC -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux src/native.c
+	x86_64-w64-mingw32-gcc native.o -shared -o ./.dist/RMCSHNative.dll
+
 clean:
 	rm -rf .mcp
+	rm -rf .dist

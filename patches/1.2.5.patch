@@ -12,7 +12,7 @@
  		}
  
  		Profiler.endSection();
-+		LabyrinthModNative.Update();
++		RMCSHNative.Update();
  		if(!this.mc.skipRenderWorld) {
  			anaglyphEnable = this.mc.gameSettings.anaglyph;
  			ScaledResolution var13 = new ScaledResolution(this.mc.gameSettings, this.mc.displayWidth, this.mc.displayHeight);
@@ -20,8 +20,8 @@
  
  			long var8;
  			if(this.mc.theWorld != null) {
-+				if(!LabyrinthModNative.Loaded) {
-+					LabyrinthModNative.Setup(this.mc);
++				if(!RMCSHNative.Loaded) {
++					RMCSHNative.Setup(this.mc);
 +				}
  				Profiler.startSection("level");
  				if(this.mc.gameSettings.limitFramerate == 0) {
@@ -31,7 +31,7 @@
  					this.mc.ingameGUI.renderGameOverlay(var1, this.mc.currentScreen != null, var16, var17);
  				}
 +				if(!Keyboard.isKeyDown(Keyboard.KEY_F3)) {
-+					LabyrinthModNative.Draw();
++					RMCSHNative.Draw();
 +				}
  
  				Profiler.endSection();
@@ -40,7 +40,7 @@
  				}
  
  				this.renderEndNanoTime = System.nanoTime();
-+				LabyrinthModNative.Reset();
++				RMCSHNative.Reset();
  			}
  
  			if(this.mc.currentScreen != null) {

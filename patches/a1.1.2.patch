@@ -12,7 +12,7 @@
  			this.mc.thePlayer.setAngles(var4, var5 * (float)var6);
  		}
  
-+		LabyrinthModNative.Update();
++		RMCSHNative.Update();
  		if(!this.mc.skipRenderWorld) {
  			ScaledResolution var7 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
  			int var8 = var7.getScaledWidth();
@@ -20,13 +20,13 @@
  			int var10 = Mouse.getX() * var8 / this.mc.displayWidth;
  			int var11 = var9 - Mouse.getY() * var9 / this.mc.displayHeight - 1;
  			if(this.mc.theWorld != null) {
-+				if(!LabyrinthModNative.Loaded) {
-+					LabyrinthModNative.Setup(this.mc);
++				if(!RMCSHNative.Loaded) {
++					RMCSHNative.Setup(this.mc);
 +				}
  				this.renderWorld(var1);
  				this.mc.ingameGUI.renderGameOverlay(var1, this.mc.currentScreen != null, var10, var11);
 +				if(!Keyboard.isKeyDown(Keyboard.KEY_F3)) {
-+					LabyrinthModNative.Draw();
++					RMCSHNative.Draw();
 +				}
  			} else {
  				GL11.glViewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
@@ -35,7 +35,7 @@
  				GL11.glMatrixMode(GL11.GL_MODELVIEW);
  				GL11.glLoadIdentity();
  				this.setupOverlayRendering();
-+				LabyrinthModNative.Reset();
++				RMCSHNative.Reset();
  			}
  
  			if(this.mc.currentScreen != null) {
