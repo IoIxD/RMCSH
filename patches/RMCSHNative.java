@@ -21,6 +21,7 @@ public class RMCSHNative {
     private static Minecraft mc;
     private static boolean TryDrawLBMStatus = true;
     private static boolean TryDraw = true;
+    private static String GameTitle;
 
     private static FontRenderer Renderer;
 
@@ -41,6 +42,8 @@ public class RMCSHNative {
         RMCSHNative.mc = mc;
         RMCSHNative.Loaded = false;
         RMCSHNative.TryDraw = false;
+
+        RMCSHNative.GameTitle = Display.getTitle();
 
         // Try and extract RMCSHNative.dll or libRMCSHNative.so from within the .jar
         String filename = "";
@@ -116,6 +119,7 @@ public class RMCSHNative {
 
     public static native void setCoords(double x, double y, double z);
     public static native void setShouldReset(boolean shouldReset);
+    public static native void setTitle(String title);
 
     public static void Update() {
         if(RMCSHNative.Loaded) {
@@ -126,6 +130,10 @@ public class RMCSHNative {
                 RMCSHNative.setShouldReset(false);
                 RMCSHNative.setCoords(TileEntityRenderer.staticPlayerX, TileEntityRenderer.staticPlayerY, TileEntityRenderer.staticPlayerZ);
             }
+            if(RMCSHNative.GameTitle == "") {
+                RMCSHNative.GameTitle = Display.getTitle();
+            }
+            RMCSHNative.setTitle(RMCSHNative.GameTitle);
         }
     }
 

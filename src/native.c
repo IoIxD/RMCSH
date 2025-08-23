@@ -1,3 +1,4 @@
+#include <string.h>
 #include <jni.h>
 #include <memory.h>
 #include <stdint.h>
@@ -11,6 +12,7 @@ struct {
   double y;
   double z;
   bool shouldReset;
+  char gameTitle[255];
 } GLOBAL_INFO;
 
 static bool hasInited = false;
@@ -79,6 +81,18 @@ JNIEXPORT void JNICALL Java_net_minecraft_src_RMCSHNative_setShouldReset(
       GLOBAL_INFO.shouldReset = shouldReset;
     }
 
+JNIEXPORT void JNICALL Java_net_minecraft_src_RMCSHNative_setTitle(
+    JNIEnv *env, jobject obj, jstring title) {
+      jboolean isCopy;
+      if(env == NULL) {
+        return;
+      }
+      if((*env)->GetStringChars == NULL) {
+        return;
+      }
+      const char * str = (*env)->GetStringUTFChars(env, title, &isCopy);
+      strcpy(GLOBAL_INFO.gameTitle, str);
+    }
 // obfuscated bindings. they don't look obfuscated but it's because "RMCSHNative" doesn't seem to get obfuscated.
 
 JNIEXPORT void JNICALL Java_RMCSHNative_init(JNIEnv *env, jobject obj) {
@@ -92,5 +106,11 @@ JNIEXPORT void JNICALL Java_RMCSHNative_setCoords(JNIEnv *env, jobject obj, jdou
 
 JNIEXPORT void JNICALL Java_RMCSHNative_setShouldReset(
     JNIEnv *env, jobject obj, jboolean shouldReset) {
-      GLOBAL_INFO.shouldReset = shouldReset;
+    Java_net_minecraft_src_RMCSHNative_setShouldReset(env,obj,shouldReset);
+}
+
+
+JNIEXPORT void JNICALL Java_RMCSHNative_setTitle(
+    JNIEnv *env, jobject obj, jstring title) {
+      Java_net_minecraft_src_RMCSHNative_setTitle(env,obj,title);
     }

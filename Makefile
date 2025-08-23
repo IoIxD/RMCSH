@@ -1,5 +1,6 @@
 .PHONY: all
 
+MOD_VERSION = v1.5
 VERSIONS = a1.1.2 a1.2.3_01-0958 a1.2.5 a1.2.6 b1.1_01 b1.2 b1.3_01 b1.4_01 b1.5_01 b1.6 b1.6.5 b1.6.6 b1.7 b1.8 b1.8.1 b1.9-pre5 1.0.0 1.1 1.2.3 1.2.5
 
 all: patch dist
@@ -93,8 +94,8 @@ test_%: recompile_%
 	fi
 
 mod_dist_%:
-	@echo packaging $*
-	@if [ ! -d "./.mcp/$*" ]; then \
+	@echo packaging $*;
+	if [ ! -d "./.mcp/$*" ]; then \
 		echo "./.mcp/$*" does not exist, cannot cannot package dll; \
 	else \
 		if [ ! -d "./.mcp/$*/minecraft/src" ]; then \
@@ -107,7 +108,7 @@ mod_dist_%:
 				java -jar ../RetroMCP-Java-CLI.jar reobfuscate $*; \
 				java -jar ../RetroMCP-Java-CLI.jar build $*; \
 			cd ../..; \
-			cp ./.mcp/$*/build/minecraft.zip ./.dist/RMCSH-$*.zip; \
+			cp ./.mcp/$*/build/minecraft.zip ./.dist/RMCSH-$(MOD_VERSION)-$*.zip; \
 		fi \
 	fi
 
