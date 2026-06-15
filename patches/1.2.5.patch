@@ -1,3 +1,28 @@
+--- net/minecraft/src/World.java
++++ net/minecraft/src/World.java
+@@ -325,6 +325,7 @@
+ 	}
+ 
+ 	public void saveWorld(boolean var1, IProgressUpdate var2) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		if(this.chunkProvider.canSave()) {
+ 			if(var2 != null) {
+ 				var2.displaySavingString("Saving level");
+@@ -340,12 +341,14 @@
+ 	}
+ 
+ 	private void saveLevel() {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		this.checkSessionLock();
+ 		this.saveHandler.saveWorldInfoAndPlayer(this.worldInfo, this.playerEntities);
+ 		this.mapStorage.saveAllData();
+ 	}
+ 
+ 	public boolean quickSaveWorld(int var1) {
++	    if(!RMCSHNative.ShouldSave) return false;
+ 		if(!this.chunkProvider.canSave()) {
+ 			return true;
+ 		} else {
 --- net/minecraft/src/EntityRenderer.java
 +++ net/minecraft/src/EntityRenderer.java
 @@ -11,6 +11,7 @@
@@ -8,7 +33,7 @@
  
  public class EntityRenderer {
  	public static boolean anaglyphEnable = false;
-@@ -610,6 +611,7 @@
+@@ -606,6 +607,7 @@
  		}
  
  		Profiler.endSection();
@@ -16,7 +41,7 @@
  		if(!this.mc.skipRenderWorld) {
  			anaglyphEnable = this.mc.gameSettings.anaglyph;
  			ScaledResolution var13 = new ScaledResolution(this.mc.gameSettings, this.mc.displayWidth, this.mc.displayHeight);
-@@ -628,6 +630,9 @@
+@@ -624,6 +626,9 @@
  
  			long var8;
  			if(this.mc.theWorld != null) {
@@ -26,7 +51,7 @@
  				Profiler.startSection("level");
  				if(this.mc.gameSettings.limitFramerate == 0) {
  					this.renderWorld(var1, 0L);
-@@ -652,6 +657,9 @@
+@@ -648,6 +653,9 @@
  				if(!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null) {
  					this.mc.ingameGUI.renderGameOverlay(var1, this.mc.currentScreen != null, var16, var17);
  				}
@@ -36,7 +61,7 @@
  
  				Profiler.endSection();
  			} else {
-@@ -677,6 +685,7 @@
+@@ -671,6 +679,7 @@
  				}
  
  				this.renderEndNanoTime = System.nanoTime();

@@ -13,8 +13,13 @@ import java.util.Arrays;
 import java.util.Map;
 import org.lwjgl.opengl.Display;
 import net.minecraft.client.Minecraft;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
 
 public class RMCSHNative {
+    public static boolean ShouldSave = false;
     public static boolean Loaded = false;
     private static boolean TriedLoad = false;
     private static long TimeSinceTried = 0;
@@ -22,10 +27,59 @@ public class RMCSHNative {
     private static boolean TryDrawLBMStatus = true;
     private static boolean TryDraw = true;
     private static String GameTitle;
+    private static File optionsFile;
 
     private static FontRenderer Renderer;
 
     private static List<String> PossibleFontRendererFieldNames = Arrays.asList("fontRenderer","field_6314_o","o");
+
+    enum OSEnum {
+            linux,
+            solaris,
+            windows,
+            macos,
+            unknown;
+    }
+
+    static {
+        RMCSHNative.optionsFile = new File(RMCSHNative.getAppDir("minecraft"), "rmcsh_options.txt");
+        boolean foundAnyOptions = false;
+        try {
+            RMCSHNative.optionsFile.createNewFile();
+            System.out.println(RMCSHNative.optionsFile.getPath());
+			if(RMCSHNative.optionsFile.exists()) {
+    			BufferedReader var1 = new BufferedReader(new FileReader(RMCSHNative.optionsFile));
+    			String var2 = "";
+
+    			while(true) {
+    				var2 = var1.readLine();
+    				if(var2 == null) {
+    					var1.close();
+    					break;
+    				}
+
+    				try {
+    					String[] var3 = var2.split(":");
+    					if(var3[0].equals("should_save")) {
+    						RMCSHNative.ShouldSave = Boolean.valueOf(var3[1].replace(" ",""));
+                            System.out.println("[RCMSH] should_save = " + String.valueOf(RMCSHNative.ShouldSave) + "(" + var3[1] + ")");
+     					    foundAnyOptions = true;
+    					}
+    				} catch (Exception var5) {
+    					System.out.println("Skipping bad option: " + var2);
+    				}
+    			}
+    			if(!foundAnyOptions) {
+    			    PrintWriter options = new PrintWriter(new FileWriter(RMCSHNative.optionsFile));
+    				options.println("should_save: true");
+    				options.close();
+    			}
+			}
+		} catch (Exception var6) {
+			System.out.println("Failed to load options");
+			var6.printStackTrace();
+		}
+    }
 
     public static void Reset() {
         RMCSHNative.Loaded = false;
@@ -45,6 +99,9 @@ public class RMCSHNative {
 
         RMCSHNative.GameTitle = Display.getTitle();
 
+
+        System.out.println("Saving: " + String.valueOf(RMCSHNative.ShouldSave));
+
         // Try and extract RMCSHNative.dll or libRMCSHNative.so from within the .jar
         String filename = "";
         String os = System.getProperty("os.name").toLowerCase();
@@ -62,7 +119,7 @@ public class RMCSHNative {
             try {
                 Files.copy(link, new File(path + "/" + filename).toPath());
                 System.out.println("Extracted native library to "+path);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 System.out.println("Could not extract native library to "+path+"! "+ex.toString());
             }
         }
@@ -93,7 +150,7 @@ public class RMCSHNative {
             } catch(NoSuchFieldException ignored) {
             }
         }
-       
+
         if(fontRenderField != null) {
             try {
                 RMCSHNative.Renderer = (FontRenderer)fontRenderField.get(mc);
@@ -113,6 +170,43 @@ public class RMCSHNative {
         RMCSHNative.TimeSinceTried = System.currentTimeMillis();
         RMCSHNative.TriedLoad = true;
         RMCSHNative.TryDraw = true;
+    }
+
+    private static OSEnum getOs() {
+            String var0 = System.getProperty("os.name").toLowerCase();
+            return var0.contains("win") ? OSEnum.windows : (var0.contains("mac") ? OSEnum.macos : (var0.contains("solaris") ? OSEnum.solaris : (var0.contains("sunos") ? OSEnum.solaris : (var0.contains("linux") ? OSEnum.linux : (var0.contains("unix") ? OSEnum.linux : OSEnum.unknown)))));
+    }
+
+
+    private static File getAppDir(String var0) {
+            String var1 = System.getProperty("user.home", ".");
+            File var2;
+            int os = getOs().ordinal();
+            switch(os) {
+            case 1:
+            case 2:
+                    var2 = new File(var1, '.' + var0 + '/');
+                    break;
+            case 3:
+                    String var3 = System.getenv("APPDATA");
+                    if(var3 != null) {
+                            var2 = new File(var3, "." + var0 + '/');
+                    } else {
+                            var2 = new File(var1, '.' + var0 + '/');
+                    }
+                    break;
+            case 4:
+                    var2 = new File(var1, "Library/Application Support/" + var0);
+                    break;
+            default:
+                    var2 = new File(var1, var0 + '/');
+            }
+
+            if(!var2.exists() && !var2.mkdirs()) {
+                    throw new RuntimeException("The working directory could not be created: " + var2);
+            } else {
+                    return var2;
+            }
     }
 
     public static native void init();

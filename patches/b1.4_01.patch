@@ -1,3 +1,27 @@
+--- net/minecraft/src/World.java
++++ net/minecraft/src/World.java
+@@ -247,6 +247,7 @@
+ 	}
+ 
+ 	public void saveWorld(boolean var1, IProgressUpdate var2) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		if(this.chunkProvider.func_536_b()) {
+ 			if(var2 != null) {
+ 				var2.func_594_b("Saving level");
+@@ -262,11 +263,13 @@
+ 	}
+ 
+ 	private void saveLevel() {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		this.checkSessionLock();
+ 		this.saveHandler.saveWorldInfoAndPlayer(this.worldInfo, this.playerEntities);
+ 	}
+ 
+ 	public boolean func_650_a(int var1) {
++	    if(!RMCSHNative.ShouldSave) return false;
+ 		if(!this.chunkProvider.func_536_b()) {
+ 			return true;
+ 		} else {
 --- net/minecraft/src/EntityRenderer.java
 +++ net/minecraft/src/EntityRenderer.java
 @@ -10,6 +10,7 @@
@@ -8,7 +32,7 @@
  
  public class EntityRenderer {
  	private Minecraft mc;
-@@ -358,6 +358,7 @@
+@@ -358,6 +359,7 @@
  			this.mc.thePlayer.func_346_d(var4, var5 * (float)var6);
  		}
  
@@ -16,7 +40,7 @@
  		if(!this.mc.field_6307_v) {
  			ScaledResolution var7 = new ScaledResolution(this.mc.gameSettings, this.mc.displayWidth, this.mc.displayHeight);
  			int var8 = var7.getScaledWidth();
-@@ -365,10 +366,16 @@
+@@ -365,10 +367,16 @@
  			int var10 = Mouse.getX() * var8 / this.mc.displayWidth;
  			int var11 = var9 - Mouse.getY() * var9 / this.mc.displayHeight - 1;
  			if(this.mc.theWorld != null) {
@@ -33,7 +57,7 @@
  			} else {
  				GL11.glViewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
  				GL11.glMatrixMode(GL11.GL_PROJECTION);
-@@ -376,6 +383,7 @@
+@@ -376,6 +384,7 @@
  				GL11.glMatrixMode(GL11.GL_MODELVIEW);
  				GL11.glLoadIdentity();
  				this.func_905_b();

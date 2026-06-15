@@ -1,6 +1,6 @@
 .PHONY: all
 
-MOD_VERSION = v1.5
+MOD_VERSION = v1.6
 VERSIONS = a1.1.2 a1.2.3_01-0958 a1.2.5 a1.2.6 b1.1_01 b1.2 b1.3_01 b1.4_01 b1.5_01 b1.6 b1.6.5 b1.6.6 b1.7 b1.8 b1.8.1 b1.9-pre5 1.0.0 1.1 1.2.3 1.2.5
 
 all: patch dist
@@ -8,6 +8,7 @@ all: patch dist
 env_setup: mcp_dir_setup retromcp_download
 setup: env_setup $(foreach version,$(VERSIONS),setup_$(version))
 decompile: setup $(foreach version,$(VERSIONS),decompile_$(version))
+createpatch: decompile $(foreach version,$(VERSIONS),createpatch_$(version))
 patch: decompile $(foreach version,$(VERSIONS),patch_$(version))
 dist: natives $(foreach version,$(VERSIONS),mod_dist_$(version))
 

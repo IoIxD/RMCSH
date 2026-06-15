@@ -10,6 +10,8 @@ b.) Display the coordinates on screen at all time as some older versions don't h
 
 Its primary use case is allowing older Minecraft Adventure maps to be speedrun convienently, as well as allow runs for maps to start based on where the player coordinates are. The displaying of coordinates is mostly useful for older versions where the F3 debug menu doesn't show coordinates, but its here for all versions so that you don't have to submit a run with the F3 menu open.
 
+It also allows you to disable world saving. World saving is on by default, but you can disable it in `rmcsh_options.txt` 
+
 # Installation
 
 Find the version that corresponds to your Minecraft version in the [releases](https://github.com/IoIxD/RMCSH/releases/latest) tab.

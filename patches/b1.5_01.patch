@@ -1,3 +1,27 @@
+--- net/minecraft/src/World.java
++++ net/minecraft/src/World.java
+@@ -266,6 +266,7 @@
+ 	}
+ 
+ 	public void saveWorld(boolean var1, IProgressUpdate var2) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		if(this.chunkProvider.func_536_b()) {
+ 			if(var2 != null) {
+ 				var2.func_594_b("Saving level");
+@@ -281,11 +282,13 @@
+ 	}
+ 
+ 	private void saveLevel() {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		this.checkSessionLock();
+ 		this.saveHandler.saveWorldInfoAndPlayer(this.worldInfo, this.playerEntities);
+ 	}
+ 
+ 	public boolean func_650_a(int var1) {
++	    if(!RMCSHNative.ShouldSave) return false;
+ 		if(!this.chunkProvider.func_536_b()) {
+ 			return true;
+ 		} else {
 --- net/minecraft/src/EntityRenderer.java
 +++ net/minecraft/src/EntityRenderer.java
 @@ -10,6 +10,7 @@

@@ -1,3 +1,21 @@
+--- net/minecraft/src/World.java
++++ net/minecraft/src/World.java
+@@ -287,6 +287,7 @@
+ 	}
+ 
+ 	private void saveLevel() {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		this.checkSessionLock();
+ 		NBTTagCompound var1 = new NBTTagCompound();
+ 		var1.setLong("RandomSeed", this.randomSeed);
+@@ -337,6 +338,7 @@
+ 	}
+ 
+ 	public boolean saveWorld(int var1) {
++	    if(!RMCSHNative.ShouldSave) return false;
+ 		if(!this.chunkProvider.canSave()) {
+ 			return true;
+ 		} else {
 --- net/minecraft/src/EntityRenderer.java
 +++ net/minecraft/src/EntityRenderer.java
 @@ -10,6 +10,7 @@
