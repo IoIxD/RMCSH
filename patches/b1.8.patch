@@ -1,3 +1,13 @@
+--- net/minecraft/src/Entity.java
++++ net/minecraft/src/Entity.java
+@@ -770,6 +770,7 @@
+ 	}
+ 
+ 	public void writeToNBT(NBTTagCompound var1) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		var1.setTag("Pos", this.newDoubleNBTList(new double[]{this.posX, this.posY + (double)this.ySize, this.posZ}));
+ 		var1.setTag("Motion", this.newDoubleNBTList(new double[]{this.motionX, this.motionY, this.motionZ}));
+ 		var1.setTag("Rotation", this.newFloatNBTList(new float[]{this.rotationYaw, this.rotationPitch}));
 --- net/minecraft/src/World.java
 +++ net/minecraft/src/World.java
 @@ -321,6 +321,7 @@

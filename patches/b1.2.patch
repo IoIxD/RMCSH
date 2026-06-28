@@ -67,3 +67,13 @@
  			}
  
  			if(this.mc.currentScreen != null) {
+--- net/minecraft/src/Entity.java
++++ net/minecraft/src/Entity.java
+@@ -691,6 +691,7 @@
+ 	}
+ 
+ 	public void writeToNBT(NBTTagCompound var1) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		var1.setTag("Pos", this.newDoubleNBTList(new double[]{this.posX, this.posY, this.posZ}));
+ 		var1.setTag("Motion", this.newDoubleNBTList(new double[]{this.motionX, this.motionY, this.motionZ}));
+ 		var1.setTag("Rotation", this.func_377_a(new float[]{this.rotationYaw, this.rotationPitch}));

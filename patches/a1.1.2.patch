@@ -1,6 +1,14 @@
 --- net/minecraft/src/World.java
 +++ net/minecraft/src/World.java
-@@ -287,6 +287,7 @@
+@@ -271,6 +271,7 @@
+ 	}
+ 
+ 	public void saveWorld(boolean var1, IProgressUpdate var2) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		if(this.chunkProvider.canSave()) {
+ 			if(var2 != null) {
+ 				var2.displayProgressMessage("Saving level");
+@@ -286,6 +287,7 @@
  	}
  
  	private void saveLevel() {
@@ -8,7 +16,7 @@
  		this.checkSessionLock();
  		NBTTagCompound var1 = new NBTTagCompound();
  		var1.setLong("RandomSeed", this.randomSeed);
-@@ -337,6 +338,7 @@
+@@ -336,6 +338,7 @@
  	}
  
  	public boolean saveWorld(int var1) {
@@ -57,3 +65,13 @@
  			}
  
  			if(this.mc.currentScreen != null) {
+--- net/minecraft/src/Entity.java
++++ net/minecraft/src/Entity.java
+@@ -648,6 +648,7 @@
+ 	}
+ 
+ 	public void writeToNBT(NBTTagCompound var1) {
++	    if(!RMCSHNative.ShouldSave) return;
+ 		var1.setTag("Pos", this.newDoubleNBTList(new double[]{this.posX, this.posY, this.posZ}));
+ 		var1.setTag("Motion", this.newDoubleNBTList(new double[]{this.motionX, this.motionY, this.motionZ}));
+ 		var1.setTag("Rotation", this.newFloatNBTList(new float[]{this.rotationYaw, this.rotationPitch}));
